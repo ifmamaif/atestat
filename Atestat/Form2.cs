@@ -16,12 +16,10 @@ namespace Atestat
         int n = 20;// maxim 25 ,preferabil 20
         int[,] a = new int[22, 22];
         int npcx, npcy;
-        bool sus, jos, dreapta, stanga, miscare, comunicare, taste = true;
-        public string moment = "normal", matrice;
-
+        bool sus, jos, dreapta, stanga, m_Miscare, comunicare, taste = true;
+        public string m_Moment = "normal", matrice;
         PictureBox[,] pictureBoxpadure1 = new PictureBox[21, 21];
         PictureBox npc;
-        int[] v = new int[2];
 
         public Form2()
         {
@@ -82,7 +80,8 @@ namespace Atestat
         {
             System.IO.StreamReader t = new System.IO.StreamReader("Resources/" + matrice);
             var a2 = t.ReadToEnd().Split('\n');
-            n = a2.Length; t.Close(); t = null;
+            n = a2.Length; 
+            t.Close();
             for (int i = 1; i <= n; i++)
             {
                 var a3 = a2[i - 1].Split(' ');
@@ -93,9 +92,7 @@ namespace Atestat
                     if (a[i, j] == 13) activJucator(i - 1, j - 1);
                     if (a[i, j] == -11) activnpc(i - 1, j - 1);
                 }
-                a3 = null;
             }
-            a2 = null;
         }
 
         private void activJucator(int x, int y)
@@ -107,22 +104,26 @@ namespace Atestat
             pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
             pictureBox1.BringToFront();
             pictureBox1.Visible = true;
-            if (moment == "normal") pictureBox1.ImageLocation = "Resources/bd02.bmp";
+            if (m_Moment == "normal") pictureBox1.ImageLocation = "Resources/bd02.bmp";
             else
                 pictureBox1.ImageLocation = "Resources/bd22.bmp";
         }
 
         private void activnpc(int x, int y)
         {
-            a[x + 1, y + 1] = -11; a[x, y] = 1;
-            npcx = x; npcy = y;
-            npc = new PictureBox();
-            npc.Top = size * (x);
-            npc.Left = size * (y);
-            npc.Height = size;
-            npc.Width = size;
-            npc.SizeMode = PictureBoxSizeMode.StretchImage;
-            npc.ImageLocation = "Resources/npcjos.bmp";
+            a[x + 1, y + 1] = -11;
+            a[x, y] = 1;
+            npcx = x; 
+            npcy = y;
+            npc = new PictureBox
+            {
+                Top = size * (x),
+                Left = size * (y),
+                Height = size,
+                Width = size,
+                SizeMode = PictureBoxSizeMode.StretchImage,
+                ImageLocation = "Resources/npcjos.bmp"
+            };
             tabPage1.Controls.Add(npc);
             npc.BringToFront();
             npc.Visible = true;
@@ -130,9 +131,14 @@ namespace Atestat
 
         private void Form2_KeyDown(object sender, KeyEventArgs e)
         {
-            if (taste == true)
-                if (e.KeyCode == Keys.Escape)
-                {
+            if (taste == false)
+            {
+                return;
+            }
+
+            switch (e.KeyCode)
+            {
+                case Keys.Escape:
                     DialogResult dialogResult = MessageBox.Show("Esti sigur ca vrei sa inchizi aplicatie?", "Sistem de iesire", MessageBoxButtons.YesNo);
                     if (dialogResult == DialogResult.Yes)
                     {
@@ -143,88 +149,91 @@ namespace Atestat
                     {
                         //do something else
                     }
-                }
-            if (e.KeyCode == Keys.Down)
-            {
-                timer1.Start();
-                jos = true;
-                comunicare = true;
-            }
-            if (e.KeyCode == Keys.Up)
-            {
-                timer1.Start();
-                sus = true;
-                comunicare = true;
-            }
-            if (e.KeyCode == Keys.Left)
-            {
-                timer1.Start();
-                stanga = true;
-                comunicare = true;
-            }
-            if (e.KeyCode == Keys.Right)
-            {
-                timer1.Start();
-                dreapta = true;
-                comunicare = true;
+                    break;
+                case Keys.Down:
+                    timer1.Start();
+                    jos = true;
+                    comunicare = true;
+                    break;
+                case Keys.Up:
+                    timer1.Start();
+                    sus = true;
+                    comunicare = true;
+                    break;
+                case Keys.Left:
+                    timer1.Start();
+                    stanga = true;
+                    comunicare = true;
+                    break;
+                case Keys.Right:
+                    timer1.Start();
+                    dreapta = true;
+                    comunicare = true;
+                    break;
             }
         }
 
         private void Form2_KeyUp(object sender, KeyEventArgs e)
         {
-            if (taste == true)
-                if (e.KeyCode == Keys.Down)
-                {
+            if (taste == false)
+            {
+                return;
+            }
+
+            switch (e.KeyCode)
+            {
+                case Keys.Down:
                     jos = false;
-                    if (moment == "normal")
-                        pictureBox1.ImageLocation = "Resources/bd02.bmp";
-                    else
-                        pictureBox1.ImageLocation = "Resources/bd22.bmp";
-                }
-            if (e.KeyCode == Keys.Up)
-            {
-                sus = false;
-                if (moment == "normal")
-                    pictureBox1.ImageLocation = "Resources/bu02.bmp";
-                else
-                    pictureBox1.ImageLocation = "Resources/bu22.bmp";
-            }
-            if (e.KeyCode == Keys.Left)
-            {
-                stanga = false;
-                if (moment == "normal")
-                    pictureBox1.ImageLocation = "Resources/bl02.bmp";
-                else
-                    pictureBox1.ImageLocation = "Resources/bl22.bmp";
-            }
-            if (e.KeyCode == Keys.Right)
-            {
-                dreapta = false;
-                if (moment == "normal")
-                    pictureBox1.ImageLocation = "Resources/br02.bmp";
-                else
-                    pictureBox1.ImageLocation = "Resources/br22.bmp";
+                    SetPlayerTexture(true, Keys.Down);
+                    break;
+                case Keys.Up:
+                    sus = false;
+                    SetPlayerTexture(true, Keys.Up);
+                    break;
+                case Keys.Left:
+                    stanga = false;
+                    SetPlayerTexture(true, Keys.Left);
+                    break;
+                case Keys.Right:
+                    dreapta = false;
+                    SetPlayerTexture(true, Keys.Right);
+                    break;
             }
         }
 
-        //private void timer2_Tick_1(object sender, EventArgs e)
-        //{
-        //
-        //}
-
-        private void mesaj(string text)
+        private void SetPlayerTexture(bool keyUP, Keys key)
         {
-            if (comunicare == true)
+            string texturePath = "Resources/b";
+            //direction
+            switch(key)
             {
-                comunicare = false;
-                timer1.Stop();
-                miscare = stanga = dreapta = sus = jos = false;
-                DialogResult d = MessageBox.Show("Ma ajuti ?", "Sofie :", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                if (d == DialogResult.Yes) MessageBox.Show("Multumesc !", "Sofie :", MessageBoxButtons.OK);
-                else if (d == DialogResult.No) MessageBox.Show("Nu te pot obliga!", "Sofie :", MessageBoxButtons.OK);
-                timer1.Start();
+                case Keys.Down:
+                    texturePath += "d";
+                    break;
+                case Keys.Up:
+                    texturePath += "u";
+                    break;
+                case Keys.Left:
+                    texturePath += "l";
+                    break;
+                case Keys.Right:
+                    texturePath += "r";
+                    break;
             }
+            //map
+            texturePath += m_Moment == "normal" ? "0" : "2";
+            //typeofmotion
+            texturePath += keyUP == true 
+                ? "2" 
+                : m_Miscare
+                    ? "3"
+                    : "1";
+
+            texturePath += ".bmp";
+            pictureBox1.ImageLocation = texturePath;
+            m_Miscare = !m_Miscare;
         }
+
 
         private void copac()
         {
@@ -232,7 +241,7 @@ namespace Atestat
             tabControl1.SelectedIndex = 1;
             pictureBox1.Visible = false;
             tabPage2.Controls.Add(pictureBox1);
-            moment = "copac";
+            m_Moment = "copac";
             CitesteFisier("copac.txt");
             pictureBox1.Visible = true;
             timer1.Start();
@@ -244,7 +253,7 @@ namespace Atestat
             tabControl1.SelectedIndex = 0;
             pictureBox1.Visible = false;
             tabPage1.Controls.Add(pictureBox1);
-            moment = "normal";
+            m_Moment = "normal";
             CitesteFisier("matrice.txt");
             activJucator(10, 15);
             pictureBox1.Visible = true;
@@ -274,13 +283,11 @@ namespace Atestat
                         a[i, j] = 0;
                         pictureBoxpadure1[i, j].ImageLocation = "Resources/tc.bmp";
                     }
+
                     if (i == 1 && a[i, j] > 0) a[i, j] = 10;
-                    else
-                        if (j == 1 && a[i, j] > 0) a[i, j] = 10;
-                    else
-                        if (i == n && a[i, j] > 0) a[i, j] = 10;
-                    else
-                        if (j == n && a[i, j] > 0) a[i, j] = 10;
+                    else if (j == 1 && a[i, j] > 0) a[i, j] = 10;
+                    else if (i == n && a[i, j] > 0) a[i, j] = 10;
+                    else if (j == n && a[i, j] > 0) a[i, j] = 10;
                 }
             for (int i = 1; i <= n; i++)
             {
@@ -339,57 +346,31 @@ namespace Atestat
         {
             if (sus == true)
             {
-                if (miscare == false)
-                {
-                    if (moment == "normal")
-                        pictureBox1.ImageLocation = "Resources/bu01.bmp";
-                    else
-                        pictureBox1.ImageLocation = "Resources/bu23.bmp";
-                    miscare = true;
-                }
-                else
-                {
-                    if (moment == "normal")
-                        pictureBox1.ImageLocation = "Resources/bu03.bmp";
-                    else
-                        pictureBox1.ImageLocation = "Resources/bu23.bmp";
-                    miscare = false;
-                }
+                SetPlayerTexture(false, Keys.Up);
+
                 if ((pictureBox1.Top) / size > 0)
                 {
                     if ((pictureBox1.Left) % size == 0)
                     {
-                        if (a[(pictureBox1.Top - viteza) / size + 1, (pictureBox1.Left) / size + 1] > 0)
+                        if (a[(pictureBox1.Top - viteza) / size + 1, pictureBox1.Left / size + 1] > 0)
                         {
                             pictureBox1.Top -= viteza;
                         }
                     }
-                    else
-                        if (a[(pictureBox1.Top - viteza) / size + 1, (pictureBox1.Left) / size + 1] > 0 && a[(pictureBox1.Top - viteza) / size + 1, (pictureBox1.Left) / size + 2] > 0)
+                    else if (a[(pictureBox1.Top - viteza) / size + 1, pictureBox1.Left / size + 1] > 0 &&
+                             a[(pictureBox1.Top - viteza) / size + 1, pictureBox1.Left / size + 2] > 0)
                     {
                         pictureBox1.Top -= viteza;
                     }
                 }
-                if (a[(pictureBox1.Top) / size + 1, (pictureBox1.Left) / size + 1] == 10 && (pictureBox1.Top) / size == 0) padure(2);
+                if (a[pictureBox1.Top / size + 1, pictureBox1.Left / size + 1] == 10 && 
+                    pictureBox1.Top / size == 0) 
+                        padure(2);
             }
             if (jos == true)
             {
-                if (miscare == false)
-                {
-                    if (moment == "normal")
-                        pictureBox1.ImageLocation = "Resources/bd01.bmp";
-                    else
-                        pictureBox1.ImageLocation = "Resources/bd21.bmp";
-                    miscare = true;
-                }
-                else
-                {
-                    if (moment == "normal")
-                        pictureBox1.ImageLocation = "Resources/bd03.bmp";
-                    else
-                        pictureBox1.ImageLocation = "Resources/bd23.bmp";
-                    miscare = false;
-                }
+                SetPlayerTexture(false, Keys.Down);
+
                 if (pictureBox1.Top / size < n)
                 {
                     if ((pictureBox1.Left) % size == 0)
@@ -410,22 +391,8 @@ namespace Atestat
             }
             if (dreapta == true)
             {
-                if (miscare == false)
-                {
-                    if (moment == "normal")
-                        pictureBox1.ImageLocation = "Resources/br01.bmp";
-                    else
-                        pictureBox1.ImageLocation = "Resources/br21.bmp";
-                    miscare = true;
-                }
-                else
-                {
-                    if (moment == "normal")
-                        pictureBox1.ImageLocation = "Resources/br03.bmp";
-                    else
-                        pictureBox1.ImageLocation = "Resources/br23.bmp";
-                    miscare = false;
-                }
+                SetPlayerTexture(false, Keys.Right);
+
                 if ((pictureBox1.Left) / size < n + 1)
                 {
                     if ((pictureBox1.Top) % size == 0)
@@ -437,7 +404,7 @@ namespace Atestat
                     }
                     else
                         if (a[pictureBox1.Top / size + 1, pictureBox1.Left / size + 2] > 0 &&
-                        a[pictureBox1.Top / size + 2, pictureBox1.Left / size + 2] > 0)
+                            a[pictureBox1.Top / size + 2, pictureBox1.Left / size + 2] > 0)
                     {
                         pictureBox1.Left += viteza;
                     }
@@ -449,21 +416,8 @@ namespace Atestat
             {
                 if (pictureBox1.Left > 0)
                 {
-                    if (miscare == false)
-                    {
-                        if (moment == "normal")
-                            pictureBox1.ImageLocation = "Resources/bl01.bmp";
-                        else
-                            pictureBox1.ImageLocation = "Resources/bl21.bmp";
-                    }
-                    else
-                    {
-                        if (moment == "normal")
-                            pictureBox1.ImageLocation = "Resources/bl03.bmp";
-                        else
-                            pictureBox1.ImageLocation = "Resources/bl23.bmp";
-                        miscare = false;
-                    }
+                    SetPlayerTexture(false, Keys.Left);
+
                     if (pictureBox1.Left / size >= 0)
                     {
                         if (pictureBox1.Top % size == 0)
@@ -473,9 +427,8 @@ namespace Atestat
                                 if (pictureBox1.Left != 0) pictureBox1.Left -= viteza;
                             }
                         }
-                        else
-                            if (a[pictureBox1.Top / size + 1, (pictureBox1.Left - viteza) / size + 1] > 0 &&
-                            a[pictureBox1.Top / size + 2, (pictureBox1.Left - viteza) / size + 1] > 0)
+                        else if (a[pictureBox1.Top / size + 1, (pictureBox1.Left - viteza) / size + 1] > 0 &&
+                                 a[pictureBox1.Top / size + 2, (pictureBox1.Left - viteza) / size + 1] > 0)
                         {
                             pictureBox1.Left -= viteza;
                         }
@@ -495,35 +448,150 @@ namespace Atestat
             if (tabControl1.SelectedIndex == 0)
                 if ((pictureBox1.Top) / size == npcx && (pictureBox1.Left + size - viteza) / size - 1 == npcy && stanga == true)
                 {
-                    timer1.Stop();
-                    npc.ImageLocation = "Resources/npcdreapta.bmp";
-                    mesaj("da");
-                    timer1.Start();
+                    NPCDo("Resources/npcdreapta.bmp");
                 }
-                else
-                    if ((pictureBox1.Top) / size == npcx && (pictureBox1.Left) / size + 1 == npcy && dreapta == true)
+                else if ((pictureBox1.Top) / size == npcx && (pictureBox1.Left) / size + 1 == npcy && dreapta == true)
                 {
-                    timer1.Stop();
-                    npc.ImageLocation = "Resources/npcstanga.bmp";
-                    mesaj("da");
-                    timer1.Start();
+                    NPCDo("Resources/npcstanga.bmp");
                 }
-                else
-                    if ((pictureBox1.Top) / size + 1 == npcx && (pictureBox1.Left) / size == npcy && jos == true)
+                else if ((pictureBox1.Top) / size + 1 == npcx && (pictureBox1.Left) / size == npcy && jos == true)
                 {
-                    timer1.Stop();
-                    npc.ImageLocation = "Resources/npcsus.bmp";
-                    mesaj("da");
-                    timer1.Start();
+                    NPCDo("Resources/npcsus.bmp");
                 }
-                else
-                    if ((pictureBox1.Top + size - viteza) / size - 1 == npcx && (pictureBox1.Left) / size == npcy && sus == true)
+                else if ((pictureBox1.Top + size - viteza) / size - 1 == npcx && (pictureBox1.Left) / size == npcy && sus == true)
                 {
-                    timer1.Stop();
-                    npc.ImageLocation = "Resources/npcjos.bmp";
-                    mesaj("da");
-                    timer1.Start();
+                    NPCDo("Resources/npcjos.bmp");
                 }
+        }
+
+        private void NPCDo(string texture)
+        {
+            timer1.Stop();
+            npc.ImageLocation = texture;
+
+            if (comunicare == true)
+            {
+                comunicare = false;
+                timer1.Stop();
+                m_Miscare = stanga = dreapta = sus = jos = false;
+                DialogResult d = MessageBox.Show("Ma ajuti ?", "Sofie :", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (d == DialogResult.Yes) MessageBox.Show("Multumesc !", "Sofie :", MessageBoxButtons.OK);
+                else if (d == DialogResult.No) MessageBox.Show("Nu te pot obliga!", "Sofie :", MessageBoxButtons.OK);
+                timer1.Start();
+            }
+
+            timer1.Start();
+        }
+
+        private void UpdatePsyisicsAndCollision(Keys direction)
+        {
+            bool isInMap = false;
+            bool isFullCollision = false;
+            bool isCollision = false;
+            int offsetTop = 0;
+            int offsetLeft = 0;
+            int shouldIAddOneLeft = 0;
+            int shouldIAddOneTop = 0;
+            switch (direction)
+            {
+                case Keys.Up:
+                    isInMap = pictureBox1.Top / size > 0;
+                    isFullCollision = (pictureBox1.Left) % size == 0;
+                    offsetTop = 1;
+                    offsetLeft = 1;
+                    shouldIAddOneLeft = 1;
+                    break;
+                case Keys.Down:
+                    isInMap = pictureBox1.Top / size < n;
+                    isFullCollision = (pictureBox1.Left) % size == 0;
+                    offsetTop = 2;
+                    offsetLeft = 1;
+                    shouldIAddOneLeft = 1;
+                    break;
+                case Keys.Left:
+                    isInMap = pictureBox1.Left / size >= 0;
+                    isFullCollision = pictureBox1.Top % size == 0;
+                    offsetTop = 1;
+                    offsetLeft = 1;
+                    shouldIAddOneTop = 1;
+                    break;
+                case Keys.Right:
+                    isInMap = (pictureBox1.Left) / size < n + 1;
+                    isFullCollision = pictureBox1.Top % size == 0;
+                    offsetTop = 1;
+                    offsetLeft = 2;
+                    shouldIAddOneTop = 1;
+                    break;
+            }
+
+
+            switch (direction)
+            {
+                case Keys.Up:
+                    if (isCollision)
+                    {
+                        if (a[(pictureBox1.Top) / size + 1, pictureBox1.Left / size + 1] > 0)
+                        {
+                            pictureBox1.Top -= viteza;
+                        }
+                    }
+                    else if (a[(pictureBox1.Top) / size + 1, pictureBox1.Left / size + 1] > 0 &&
+                             a[(pictureBox1.Top) / size + 1, pictureBox1.Left / size + 2] > 0)
+                    {
+                        pictureBox1.Top -= viteza;
+                    }
+                    break;
+                case Keys.Down:
+                    if (isCollision)
+                    {
+                        if (a[(pictureBox1.Top) / size + 2, (pictureBox1.Left) / size + 1] > 0)
+                        {
+                            pictureBox1.Top += viteza;
+                        }
+                    }
+                    else if (a[(pictureBox1.Top) / size + 2, (pictureBox1.Left) / size + 1] > 0 &&
+                             a[(pictureBox1.Top) / size + 2, (pictureBox1.Left) / size + 2] > 0)
+                    {
+                        pictureBox1.Top += viteza;
+                    }
+                    break;
+                case Keys.Left:
+                    if (isCollision)
+                    {
+                        if (a[pictureBox1.Top / size + 1, (pictureBox1.Left - viteza) / size + 1] > 0)
+                        {
+                            if (pictureBox1.Left != 0) pictureBox1.Left -= viteza;
+                        }
+                    }
+                    else if (a[pictureBox1.Top / size + 1, (pictureBox1.Left - viteza) / size + 1] > 0 &&
+                             a[pictureBox1.Top / size + 2, (pictureBox1.Left - viteza) / size + 1] > 0)
+                    {
+                        pictureBox1.Left -= viteza;
+                    }
+                    break;
+                case Keys.Right:
+                    if (isCollision)
+                    {
+                        if (a[pictureBox1.Top / size + 1, pictureBox1.Left / size + 2] > 0)
+                        {
+                            pictureBox1.Left += viteza;
+                        }
+                    }
+                    else if (a[pictureBox1.Top / size + 1, pictureBox1.Left / size + 2] > 0 &&
+                             a[pictureBox1.Top / size + 2, pictureBox1.Left / size + 2] > 0)
+                    {
+                        pictureBox1.Left += viteza;
+                    }
+                    break;
+            }
+
+            if (isInMap)
+            {
+                if (isFullCollision)
+                {
+                }
+            }
+
         }
 
     }
